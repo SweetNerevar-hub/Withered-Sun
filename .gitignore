@@ -1,0 +1,19 @@
+# Build Output Files
+bin/
+bin-int/
+build/
+build-int/
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+
+# Visual Studio Files
+.vs/
+*.suo
+*.user
+*.ncb
+*.sdf
+*.cache
+*.log
