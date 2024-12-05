@@ -3,6 +3,13 @@
 
 void Game::start()
 {
+	Apollo::ApolloECS::registerComponent<Apollo::ECS::Position>();
+	Apollo::ApolloECS::registerComponent<Apollo::ECS::Velocity>();
+	Apollo::ApolloECS::registerComponent<Apollo::ECS::SpriteRenderer>();
+	Apollo::ApolloECS::registerComponent<Apollo::ECS::BoxCollider>();
+	Apollo::ApolloECS::registerComponent<Apollo::ECS::Animator>();
+	Apollo::ApolloECS::registerComponent<Apollo::ECS::Camera>();
+
 	Apollo::Scene::SceneManager::addScene<Scene_Menu>(false);
 }
 
