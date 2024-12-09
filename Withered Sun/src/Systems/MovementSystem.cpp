@@ -2,9 +2,9 @@
 #include "Systems.h"
 #include "../Components/Components.h"
 
-void MovementSystem::update(ECS::Entities& entities)
+void MovementSystem::update()
 {
-	for (ECS::Entity e : entities)
+	for (ECS::Entity e : ApolloECS::getEntities())
 	{
 		if (!e.has<ECS::Velocity>())
 			return;

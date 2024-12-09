@@ -9,6 +9,8 @@ void Scene_Game::start()
 	std::cout << "Started Game Scene" << std::endl;
 
 	ApolloECS::registerComponent<MoveSpeed>();	
+	ApolloECS::registerComponent<Health>();
+
 	AssetManager::loadTextures("assets/scene_game/images/characters");
 	AssetManager::loadTextures("assets/scene_game/images/enemies");
 
@@ -19,9 +21,23 @@ void Scene_Game::start()
 	m_player.add<ECS::SpriteRenderer>(9.f, 23.f);
 	m_player.add<ECS::Animator>();
 	m_player.add<MoveSpeed>(3.f);
+	m_player.add<Health>(20.f);
 
 	sf::Vector2f origin{ m_player.get<ECS::Position>().x, m_player.get<ECS::Position>().y };
 	m_player.add<ECS::BoxCollider>(origin, 9, 23);
+
+
+	m_enemy = ApolloECS::createEntity("Enemy");
+	m_enemy.add<ECS::Position>(400.f, 600.f);
+	m_enemy.add<ECS::Scale>();
+	m_enemy.add<ECS::Velocity>();
+	m_enemy.add<ECS::SpriteRenderer>(9.f, 24.f);
+	m_enemy.add<ECS::Animator>();
+	m_enemy.add<MoveSpeed>();
+	m_enemy.add<Health>(10.f);
+
+	sf::Vector2f _origin{ m_enemy.get<ECS::Position>().x, m_enemy.get<ECS::Position>().y };
+	m_enemy.add<ECS::BoxCollider>(_origin, 9, 24);
 }
 
 void Scene_Game::handleInputs(sf::Event& event)
@@ -33,7 +49,13 @@ void Scene_Game::handleInputs(sf::Event& event)
 		{
 			ECS::TransformSystem::setScale(m_player, {3.f, 3.f});
 		}
+		break;
 
+	case sf::Event::MouseButtonPressed:
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			handleRaycastHit(raycastHit);
+		}
 		break;
 	}
 }
@@ -41,20 +63,40 @@ void Scene_Game::handleInputs(sf::Event& event)
 void Scene_Game::fixedUpdate()
 {
 	PlayerMovementSystem::updateVelocity(m_player);
-	MovementSystem::update(ApolloECS::getEntities());
-	ECS::CollisionSystem::update(ApolloECS::getEntities());
+	MovementSystem::update();
+	ECS::CollisionSystem::update();
 }
 
 void Scene_Game::update()
 {
-	ECS::TransformSystem::setPosition(m_player);
-	m_player.get<ECS::SpriteRenderer>().sprite.setDirty();
+	sf::Vector2f playerPos = ECS::TransformSystem::getPositionCentre(m_player);
+	sf::Vector2f mousePos = Window::window()->mapPixelToCoords(sf::Mouse::getPosition(*Window::window()));
+
+	raycastHit = ECS::RaycastSystem::cast(m_player, Math::direction(playerPos, mousePos), k_rayDistance);
+	m_line = LineSystem::castToPosition(playerPos, raycastHit.pos, sf::Color::Red);
+
+	DeathSystem::update();
 }
 
 void Scene_Game::render(sf::RenderWindow& window)
 {
-	m_player.get<ECS::SpriteRenderer>().sprite.updateBuffer();
+	for (ECS::Entity e : ApolloECS::getEntities())
+	{
+		if (!e.has<ECS::SpriteRenderer>())
+			continue;
+
+		ECS::TransformSystem::setPosition(e);
+		e.get<ECS::SpriteRenderer>().sprite.setDirty();
+		e.get<ECS::SpriteRenderer>().sprite.updateBuffer();
+	}
+
+	window.draw(m_line.data(), 2, sf::Lines);
 	window.draw(m_player.get<ECS::SpriteRenderer>().sprite, &AssetManager::getTexture("atlas_protagonist"));
+
+	if (m_enemy.has<ECS::SpriteRenderer>())
+	{
+		window.draw(m_enemy.get<ECS::SpriteRenderer>().sprite, &AssetManager::getTexture("enemy_eyen"));
+	}
 }
 
 void Scene_Game::shutdown()
@@ -67,4 +109,16 @@ void Scene_Game::shutdown()
 	}
 
 	ApolloECS::getEntities().clear();
+}
+
+void Scene_Game::handleRaycastHit(ECS::Intersect hit)
+{
+	if (!hit.result)
+		return;
+
+	if (hit.hit.getTag() == "Enemy")
+	{
+		std::cout << "Hit Enemy" << std::endl;
+		hit.hit.get<Health>().health -= 5.f;
+	}
 }

@@ -36,7 +36,12 @@ public:
 
 private:
 	ECS::Entity m_player;
+	ECS::Entity m_enemy;
+
+	std::array<sf::Vertex, 2> m_line;
+	const float k_rayDistance = 1000.f;
+	ECS::Intersect raycastHit;
 
 private:
-	void drawLaserSight();
+	void handleRaycastHit(ECS::Intersect hit);
 };
