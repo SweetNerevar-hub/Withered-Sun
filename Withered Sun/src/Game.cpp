@@ -3,7 +3,15 @@
 
 void Game::start()
 {
-	Apollo::Scene::SceneManager::addScene<Scene_Menu>(false);
+	ApolloECS::registerComponent<ECS::Position>();
+	ApolloECS::registerComponent<ECS::Scale>();
+	ApolloECS::registerComponent<ECS::Velocity>();
+	ApolloECS::registerComponent<ECS::SpriteRenderer>();
+	ApolloECS::registerComponent<ECS::BoxCollider>();
+	ApolloECS::registerComponent<ECS::Animator>();
+	ApolloECS::registerComponent<ECS::Camera>();
+
+	Scene::SceneManager::addScene<Scene_Menu>(false);
 }
 
 void Game::handleInput(sf::Event& event)
