@@ -9,7 +9,9 @@
 #include "GameEvents/GameEvents.h"
 #include "Scenes/GameScenes.h"
 
-class Game : public Apollo::IGame
+using namespace Apollo;
+
+class Game : public IGame
 {
 public:
 	void start() override;
@@ -18,5 +20,5 @@ public:
 	void update() override;
 	void render(sf::RenderWindow& window) override;
 
-	Game(Apollo::u32 entityArraySize) : Apollo::IGame(entityArraySize) {}
+	Game(u32 entityArraySize) : IGame(entityArraySize) {}
 };

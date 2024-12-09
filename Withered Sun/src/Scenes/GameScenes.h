@@ -2,7 +2,9 @@
 
 #include <Apollo.h>
 
-class Scene_Menu : public Apollo::Scene::Scene
+using namespace Apollo;
+
+class Scene_Menu : public Scene::Scene
 {
 public:
 	void start() override;
@@ -19,7 +21,7 @@ private:
 
 };
 
-class Scene_Game : public Apollo::Scene::Scene
+class Scene_Game : public Scene::Scene
 {
 public:
 	void start() override;
@@ -33,8 +35,8 @@ public:
 	void resume() override {}
 
 private:
-	Apollo::ECS::Entity m_player;
-	sf::Texture m_playerTexture;
+	ECS::Entity m_player;
 
-	void setPosition(Apollo::ECS::Entity entity);
+private:
+	void drawLaserSight();
 };

@@ -138,7 +138,9 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Scenes\Scene_Game.cpp" />
     <ClCompile Include="src\Scenes\Scene_Menu.cpp" />
+    <ClCompile Include="src\Systems\LineSystem.cpp" />
     <ClCompile Include="src\Systems\MovementSystem.cpp" />
+    <ClCompile Include="src\Systems\PlayerMovementSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Components\Components.h" />

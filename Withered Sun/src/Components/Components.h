@@ -2,7 +2,9 @@
 
 #include <Apollo.h>
 
-struct MoveSpeed : public Apollo::ECS::Component
+using namespace Apollo;
+
+struct MoveSpeed : public ECS::Component
 {
 	float speed = 0.f;
 

@@ -13,7 +13,7 @@ void Scene_Menu::handleInputs(sf::Event& event)
 	case sf::Event::KeyPressed:
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
 		{
-			Apollo::Scene::SceneManager::addScene<Scene_Game>(true);
+			Apollo::Scene::SceneManager::addScene<Scene_Game>(false);
 		}
 
 		break;
@@ -37,12 +37,12 @@ void Scene_Menu::render(sf::RenderWindow& window)
 
 void Scene_Menu::shutdown()
 {
-	Apollo::AssetManager::clearAssets();
+	AssetManager::clearAssets();
 
-	for (Apollo::ECS::Entity e : Apollo::ApolloECS::getEntities())
+	for (ECS::Entity e : ApolloECS::getEntities())
 	{
-		Apollo::ApolloECS::destroyEntity(e);
+		ApolloECS::destroyEntity(e);
 	}
 
-	Apollo::ApolloECS::getEntities().clear();
+	ApolloECS::getEntities().clear();
 }
