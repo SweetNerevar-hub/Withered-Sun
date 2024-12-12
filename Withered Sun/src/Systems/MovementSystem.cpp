@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Systems.h"
-#include "../Components/Components.h"
 
 void MovementSystem::update()
 {

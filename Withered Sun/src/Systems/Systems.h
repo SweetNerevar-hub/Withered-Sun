@@ -34,3 +34,12 @@ class DeathSystem
 public:
 	static void update();
 };
+
+class SpawnSystem
+{
+public:
+	static void update(World& world, Spawner& spawner);
+
+private:
+	static void spawnEnemy(World& world, Spawner& spawner);
+};

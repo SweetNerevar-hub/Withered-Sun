@@ -142,6 +142,7 @@
     <ClCompile Include="src\Systems\LineSystem.cpp" />
     <ClCompile Include="src\Systems\MovementSystem.cpp" />
     <ClCompile Include="src\Systems\PlayerMovementSystem.cpp" />
+    <ClCompile Include="src\Systems\SpawnSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Components\Components.h" />
