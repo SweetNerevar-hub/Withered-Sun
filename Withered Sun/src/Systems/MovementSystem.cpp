@@ -6,7 +6,7 @@ void MovementSystem::update()
 	for (ECS::Entity e : ApolloECS::getEntities())
 	{
 		if (!e.has<ECS::Velocity>())
-			return;
+			continue;
 
 		ECS::Position& position = e.get<ECS::Position>();
 		ECS::Velocity& velocity = e.get<ECS::Velocity>();

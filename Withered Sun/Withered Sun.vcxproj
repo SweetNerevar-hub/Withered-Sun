@@ -149,7 +149,9 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameEvents\GameEvents.h" />
     <ClInclude Include="src\Scenes\GameScenes.h" />
+    <ClInclude Include="src\Spawner.h" />
     <ClInclude Include="src\Systems\Systems.h" />
+    <ClInclude Include="src\World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

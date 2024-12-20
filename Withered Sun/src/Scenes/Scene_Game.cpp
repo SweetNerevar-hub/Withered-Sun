@@ -1,36 +1,40 @@
 #include "pch.h"
 #include "GameScenes.h"
 
-#include "../Systems/Systems.h"
-#include "../Components/Components.h"
-
 void Scene_Game::start()
 {
 	std::cout << "Started Game Scene" << std::endl;
 
+	ApolloECS::registerComponent<ECS::Cell>();
 	ApolloECS::registerComponent<MoveSpeed>();	
 	ApolloECS::registerComponent<Health>();
-	ApolloECS::registerComponent<Spawner>();
-	ApolloECS::registerComponent<World>();
 
 	AssetManager::loadTextures("assets/scene_game/images/characters");
 	AssetManager::loadTextures("assets/scene_game/images/enemies");
-
-	m_world.add<World>();
-	worldComponent = m_world.get<World>();
-
-	m_spawner.add<Spawner>(3.f);
-	spawnComponent = m_spawner.get<Spawner>();
+	AssetManager::loadTextures("assets/scene_game/images/environment");
 
 	m_player = ApolloECS::createEntity("Player");
-	m_player.add<ECS::Position>(200.f, 300.f);
+	m_player.add<ECS::Position>(200.f, 100.f);
 	m_player.add<ECS::Scale>();
-	m_player.add<ECS::Velocity>(1.f, 1.f);
+	m_player.add<ECS::Velocity>();
 	m_player.add<ECS::SpriteRenderer>(9.f, 23.f);
 	m_player.add<ECS::Animator>();
 	m_player.add<ECS::BoxCollider>(sf::Vector2f{ 0, 0 }, 9, 23);
-	m_player.add<MoveSpeed>(3.f);
+	m_player.add<MoveSpeed>(2.f);
 	m_player.add<Health>(20.f);
+
+	m_cellMap = new Map(AssetManager::getTexture("atlas_environment"), 16, true);
+	m_cellMap->addPixelData(sf::Color::White, { 0, 0, 16, 16 }, false, 3);
+	m_cellMap->addPixelData(sf::Color::Black, { 0, 0, 16, 16 }, true, 3);
+	m_cellMap->load("assets/scene_game/map/cellmap_test.png");
+
+	m_spriteMap = new Map(AssetManager::getTexture("atlas_environment"), 16, false);
+	m_spriteMap->addPixelData({ 34, 32, 52 }, { 0, 16, 16, 16 }, false, 3);
+	m_spriteMap->addPixelData({ 138, 111, 48 }, { 0, 32, 16, 16 });
+	m_spriteMap->addPixelData({ 223, 113, 38 }, { 32, 32, 16, 16 });
+	m_spriteMap->addPixelData({ 82, 75, 36 }, { 16, 32, 16, 16 });
+	m_spriteMap->addPixelData({ 143, 86, 59 }, { 48, 32, 16, 16 });
+	m_spriteMap->load("assets/scene_game/map/spritemap_test.png");
 }
 
 void Scene_Game::handleInputs(sf::Event& event)
@@ -63,23 +67,26 @@ void Scene_Game::fixedUpdate()
 void Scene_Game::update()
 {
 	sendRaycast();
-	SpawnSystem::update(worldComponent, spawnComponent);
-	DeathSystem::update();
+	SpawnSystem::update(world, spawner);
+	DeathSystem::update(world);
 
 	setSpritePositions();
 
 	m_player.get<ECS::SpriteRenderer>().sprite.setDirty();
-	worldComponent.enemyVA.setDirty();
+	world.enemyVA.setDirty();
 }
 
 void Scene_Game::render(sf::RenderWindow& window)
 {
 	m_player.get<ECS::SpriteRenderer>().sprite.updateBuffer();
-	worldComponent.enemyVA.updateBuffer();
+	world.enemyVA.updateBuffer();
+
+	m_cellMap->draw(window);
+	m_spriteMap->draw(window);
 
 	window.draw(m_line.data(), 2, sf::Lines);
 	window.draw(m_player.get<ECS::SpriteRenderer>().sprite, &AssetManager::getTexture("atlas_protagonist"));
-	window.draw(worldComponent.enemyVA, &AssetManager::getTexture("enemy_eyen"));
+	window.draw(world.enemyVA, &AssetManager::getTexture("enemy_eyen"));
 }
 
 void Scene_Game::shutdown()
@@ -105,7 +112,8 @@ void Scene_Game::setSpritePositions()
 
 		if (e.getTag() == "Enemy")
 		{
-			ECS::TransformSystem::setPosition(e, worldComponent.enemyVA);
+			ECS::TransformSystem::setPosition(e, world.enemyVA);
+			continue;
 		}
 
 		ECS::TransformSystem::setPosition(e);

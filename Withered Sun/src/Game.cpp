@@ -47,5 +47,5 @@ void Game::render(sf::RenderWindow& window)
 
 Apollo::IGame* Apollo::createGame()
 {
-	return new Game(5000);
+	return new Game(10000);
 }

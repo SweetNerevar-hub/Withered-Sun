@@ -37,16 +37,19 @@ public:
 	void resume() override {}
 
 private:
+	Map* m_cellMap = nullptr;
+	Map* m_spriteMap = nullptr;
+
 	ECS::Entity m_world;
 	ECS::Entity m_player;
 	ECS::Entity m_spawner;
 
-	std::array<sf::Vertex, 2> m_line;
+	Line m_line;
 	const float k_rayDistance = 1000.f;
 	ECS::Intersect m_raycastHit;
 
-	Spawner spawnComponent;
-	World worldComponent;
+	Spawner spawner{ 3.f };
+	World world;
 
 private:
 	void setSpritePositions();
